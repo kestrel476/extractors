@@ -59,7 +59,7 @@ archives = [                                        # RAR/7z/CAB/ISO и пото
 ]
 misc = ["PyYAML>=6.0", "psd-tools>=1.9"]           # YAML, текстовые слои PSD
 all = ["extractors[mime,pdf,office,data,web,email,markdown,archives,misc]"]
-dev = ["pytest>=7.0", "mypy>=1.8"]                 # тесты и проверка типов
+dev = ["pytest>=7.0", "coverage>=7.0", "mypy>=1.8"]  # тесты, покрытие, проверка типов
 
 [tool.setuptools.packages.find]
 where = ["src"]
