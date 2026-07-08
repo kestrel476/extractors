@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "extractors"
+version = "0.1.0"
+description = "Модульный сервис извлечения текстового слоя (~175 форматов) с Markdown-режимом для LLM"
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["text-extraction", "markdown", "documents", "ocr", "llm", "pdf", "docx"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Text Processing",
+    "Topic :: Office/Business",
+]
+
+# Ядро — минимально; всё, что зависит от формата, ставится через extras ниже.
+dependencies = [
+    "pydantic>=2.0",
+    "charset-normalizer>=3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/kestrel476/extractors"
+Repository = "https://github.com/kestrel476/extractors"
+
+# Консольная команда `extractors` (эквивалент `python -m extractors`).
+[project.scripts]
+extractors = "extractors.cli:main"
+
+# ── Опциональные зависимости по группам форматов ──────────────────────────
+# Ставьте нужные группы: pip install "extractors[pdf,office,markdown]"
+# либо всё сразу: pip install "extractors[all]"
+[project.optional-dependencies]
+mime = ["python-magic>=0.4"]                       # определение MIME по содержимому
+pdf = ["PyMuPDF>=1.23"]                            # PDF, XPS/OXPS, FB2, MOBI/AZW, CBZ
+office = [                                          # Office + OpenDocument
+    "python-docx>=1.1",
+    "python-pptx>=0.6",
+    "pandas>=2.0",
+    "openpyxl>=3.1",
+    "xlrd>=2.0",
+    "pyxlsb>=1.0",
+    "odfpy>=1.4",
+]
+data = ["pandas>=2.0", "pyarrow>=14.0", "fastavro>=1.9"]   # Parquet/Feather/ORC/Avro
+web = ["beautifulsoup4>=4.12", "lxml>=4.9", "EbookLib>=0.18"]  # HTML/EPUB/MHTML
+email = ["extract-msg>=0.48"]                      # Outlook .msg
+markdown = ["markitdown[all]>=0.1.6"]              # Markdown-режим (--md)
+archives = [                                        # RAR/7z/CAB/ISO и потоковые
+    "rarfile>=4.0",
+    "py7zr>=0.21",
+    "zstandard>=0.22",
+    "lz4>=4.0",
+    "cabarchive>=0.2",
+    "pycdlib>=1.14",
+]
+misc = ["PyYAML>=6.0", "psd-tools>=1.9"]           # YAML, текстовые слои PSD
+all = ["extractors[mime,pdf,office,data,web,email,markdown,archives,misc]"]
+dev = ["pytest>=7.0", "mypy>=1.8"]                 # тесты и проверка типов
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+extractors = ["py.typed"]
+
+[tool.mypy]
+files = ["src/extractors"]
+# Опциональные зависимости форматов (fitz, docx, markitdown, …) без type-stubs —
+# их отсутствие типов не должно ронять проверку пакета.
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
